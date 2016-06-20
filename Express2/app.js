@@ -10,12 +10,11 @@ app.get("/",function(req,res){
 
 app.get("/custom/:data",function(req,res){
 	var data = req.params.data;
-	console.log(data);
 	res.render("custom",{data: data});
 });
 
 
-app.listen(3000,function(){
-  console.log("Application started successfully on port 3000");
+app.listen(process.env.PORT,process.env.IP,function(){
+  console.log("Application started successfully on "+process.env.IP+":"+process.env.PORT);
 });
 

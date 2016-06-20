@@ -22,7 +22,7 @@ echo "{
 echo "var express = require(\"express\");
 var app = express();
 
-app.listen(3000,function(){
-  console.log(\"Application started successfully on port 3000\");
+app.listen(process.env.PORT,process.env.IP,function(){
+  console.log(\"Application started successfully on \"+process.env.IP+\":\"+process.env.PORT);
 });
 " > $1/app.js
