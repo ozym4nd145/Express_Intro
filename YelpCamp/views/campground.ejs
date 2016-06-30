@@ -1,0 +1,9 @@
+<% include partials/header %>
+<div id = "campground_page" class="container">
+	<h1><%= camp.name %></h1>
+	<img src="<%= camp.src %>">
+	<div class="container description">
+		<%- camp.desc %>
+	</div>
+</div>
+<% include partials/footer %>

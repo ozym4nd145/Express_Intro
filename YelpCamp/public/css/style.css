@@ -1,0 +1,19 @@
+#campground_page {
+	max-width: 800px;
+}
+
+#campground_page h1 {
+	text-align: center;
+}
+
+#campground_page img{
+margin: auto;
+display: block;
+width: 80%;
+}
+
+#campground_page .description{
+	width: 100%;
+	margin: 0;
+	margin-top: 5%;
+}
