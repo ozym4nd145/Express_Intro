@@ -1,9 +1,35 @@
+*{
+	box-sizing: border-box;
+}
+
+/**
+ * camps display page
+ */
+
+.thumbnail {
+
+	box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+.border {
+	border: 5px solid rgba(0,0,0,0.2);
+	border-radius: 20px;
+	margin-bottom: 10%;
+	padding-bottom: 1%;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+}
+
+
+/**
+ * campground page
+ */
 #campground_page {
 	max-width: 800px;
 }
 
 #campground_page h1 {
 	text-align: center;
+	padding: 3%;
 }
 
 #campground_page img{
@@ -15,5 +41,30 @@ width: 80%;
 #campground_page .description{
 	width: 100%;
 	margin: 0;
-	margin-top: 5%;
+	margin-top: 10%;
+	padding-bottom: 5%;
+
+}
+
+#campground_page strong{
+	font-size: 1.3em;
+}
+
+#campground_page .btn-group {
+	width: 100%;
+}
+
+#campground_page .btn {
+	width: 100%;
+}
+
+#campground_page form {
+	display: inline-block;
+	width: 49.5%;
+	padding: 0;
+	margin: 0;
+}
+
+#campground_page i {
+	margin: 0 3%;
 }

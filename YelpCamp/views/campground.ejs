@@ -1,9 +1,16 @@
 <% include partials/header %>
-<div id = "campground_page" class="container">
+<base href="/campgrounds/<%= camp._id %>/" />
+<div id = "campground_page" class="container border">
 	<h1><%= camp.name %></h1>
-	<img src="<%= camp.src %>">
+	<img src="<%= camp.src %>" class="img-rounded">
 	<div class="container description">
 		<%- camp.desc %>
 	</div>
+	<form action="edit/" method="get">
+		<button type="submit" class="edit btn btn-lg bg-info text-info"><i class = "glyphicon glyphicon-pencil"></i>Edit</button>
+	</form>
+	<form action="/campgrounds/<%= camp._id %>?_method=DELETE" method="POST">
+		<button type="submit" class="delete btn btn-lg bg-danger text-danger"><i class="glyphicon glyphicon-trash"></i>Delete</button>
+	</form>
 </div>
 <% include partials/footer %>
