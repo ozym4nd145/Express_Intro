@@ -1,160 +1,70 @@
-var express = require("express");
-var expressSanitizer = require("express-sanitizer");
-var methodOverride = require("method-override");
-var bodyParser = require("body-parser");
-var mongoose = require("mongoose");
-var Camp = require("./models/camp");
+var express = require("express"),
+    expressSanitizer = require("express-sanitizer"),
+    methodOverride = require("method-override"),
+    bodyParser = require("body-parser"),
+    mongoose = require("mongoose"),
+    Camp = require("./models/camp"),
+    Comment = require("./models/comments"),
+    seed = require("./models/seeds"),
+    passport = require("passport"),
+    LocalStrategy = require("passport-local"),
+    passportLocalMongoose = require("passport-local-mongoose"),
+    User = require("./models/user");
+
+var indexRoutes = require("./routes/index"),
+    campgroundRoutes = require("./routes/campgrounds"),
+    commentRoutes = require("./routes/comments");
 
 var app = express();
 
 mongoose.connect("mongodb://localhost/yelpcamp");
 
+app.use(require("express-session")({
+  secret: "I will become a legendary programmer and change the world.",
+  resave: false,
+  saveUninitialized: false,
+}));
+
+
 app.use(methodOverride("_method"));
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+//Adding currentUser to local variables in templates
+app.use(function(req,res,next){
+  res.locals.currentUser = req.user;
+  next();
+});
+
 app.set("view engine", "ejs");
 
 /**
- * Home Page
+ * Routes
  */
-app.get("/",function(req,res){
-  res.render("home");
-});
-
-
-/**
- * Render all campgrounds
- */
-app.get("/campgrounds",function(req,res){
-	Camp.find({},function(err,camps){
-		if(err){
-			console.log("Error while searching for camps");
-		}
-		else{
-			res.render("campgrounds",{camps:camps});
-		}
-	});
-});
-
-/**
- * Create a new campground
- */
-app.post("/campgrounds",function(req,res){
-	var isValid = true;
-	var camp = {};
-	keys = ["name","src","desc"];
-	for(var i=0;i<keys.length;i++){
-		if (!(keys[i] in req.body && req.body[keys[i]] !== "")){
-			isValid = false;
-			break;
-		}
-		camp[keys[i]] = req.body[keys[i]];
-	}
-	if (isValid){
-		camp.desc = req.sanitize(camp.desc);
-		Camp.create(camp,function(err,obj){
-			if (err){
-				console.log("error while creation");
-				res.redirect("/campgrounds/new");
-			}
-			else{
-				res.redirect("/campgrounds");
-			}
-		});
-	}
-	else{
-		res.redirect("/campgrounds/new");
-	}
-});
-
-
-/**
- * Display form for making new campground
- */
-
-app.get("/campgrounds/new",function(req,res){
-	res.render("newCampground");
-});
-
-
-/**
- * display details of a campground
- */
-app.get("/campgrounds/:id",function(req,res){
-	Camp.findOne({_id: req.params.id},function(err,camp){
-		if(err){
-			res.redirect("/campgrounds");
-		}
-		else{
-			res.render("campground",{camp:camp});
-		}
-	});
-});
-
-/**
- * Edit info of a campground
- */
-app.put("/campgrounds/:id",function(req,res) {
-	Camp.findOne({ _id: req.params.id }, function (err, camp){
-		if(err){
-			res.redirect("/campgrounds/"+req.params.id+"/edit/");
-		}
-		var isValid = true;
-		keys = ["name","src","desc"];
-		for(var i=0;i<keys.length;i++){
-			if (!(keys[i] in req.body && req.body[keys[i]] !== "")){
-				isValid = false;
-				break;
-			}
-			camp[keys[i]] = req.body[keys[i]];
-		}
-		if (isValid){
-			camp.desc = req.sanitize(camp.desc);
-			camp.save();
-			res.redirect("/campgrounds/"+req.params.id+"/");
-		}
-		else{
-			res.redirect("/campgrounds/"+req.params.id+"/edit/");
-		}
-	});
-});
-
-/**
- * remove a campground
- */
-
-app.delete("/campgrounds/:id",function(req,res){
-	Camp.findOne({_id: req.params.id}, function(err,camp){
-		if(err){
-			res.redirect("/campgrounds/"+req.params.id+"/");
-		}
-		else{
-			camp.remove();
-			res.redirect("/campgrounds/");
-		}
-	});
-});
-
-/**
- * display edit form of a campground
- */
-
-app.get("/campgrounds/:id/edit",function(req,res){
-	Camp.findOne({_id: req.params.id},function(err,camp){
-		if(err){
-			res.redirect("/campgrounds/");
-		}
-		else{
-			res.render("editCamp",{camp:camp});
-		}
-	});
-});
-
+app.use("/",indexRoutes);
+app.use("/campgrounds",campgroundRoutes);
+app.use("/campgrounds/:id/comments",commentRoutes);
 
 /**
  * Start the server
  */
+
+// User.findOne({"username":"God"},function(err,user){
+//   Camp.find({},function(err,camps){
+//     camps.forEach(function (camp) {
+//       camp.author.id = user._id;
+//       camp.author.username = user.username;
+//       camp.save();
+//     });
+//   });
+// });
 
 app.listen(process.env.PORT,process.env.IP,function(){
   console.log("Application started successfully on "+process.env.IP+":"+process.env.PORT);

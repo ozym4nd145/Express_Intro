@@ -21,15 +21,27 @@ echo "{
     \"body-parser\": \"^1.15.2\",
     \"ejs\": \"^2.4.2\",
     \"mongoose\": \"^4.5.1\"
+    \"method-override\": \"^2.3.6\",
+    \"express-sanitizer\": \"^1.0.1\",
   }
 }" > $1/package.json
 
-echo "var express = require(\"express\");
-var app = express();
+echo "
+var express = require(\"express\");
+var expressSanitizer = require(\"express-sanitizer\");
+var methodOverride = require(\"method-override\");
 var bodyParser = require(\"body-parser\");
-app.use(express.static(\"public\"));
-app.set(\"view engine\", \"ejs\");
+var mongoose = require(\"mongoose\");
+
+mongoose.connect(\"mongodb://localhost/yelpcamp\");
+
+var app = express();
+
+app.use(methodOverride(\"_method\"));
+app.use(express.static(__dirname+\"public\"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(expressSanitizer());
+app.set(\"view engine\", \"ejs\");
 
 app.get(\"/\",function(req,res){
   res.render(\"home\");
