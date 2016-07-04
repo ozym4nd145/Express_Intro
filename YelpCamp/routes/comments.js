@@ -59,7 +59,6 @@ router.put("/:commentId",isLoggedIn,function(req,res){
       res.redirect("back");
     }
     else if(req.user._id.toString() === comment.author.id.toString()){
-      console.log(req.body);
       if(req.body.comment && req.body.comment!==""){
         comment.text = req.body.comment;
         comment.save(function (err,comment) {
