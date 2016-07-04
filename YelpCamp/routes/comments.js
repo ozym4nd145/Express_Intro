@@ -11,6 +11,7 @@ router.post("",isLoggedIn,function(req,res){
   Camp.findOne({_id:req.params.id},function(err,camp){
     if(err){
       console.log(err);
+      req.flash("error","Error while creating comment. Please try again.")
       res.redirect("/campgrounds/");
     }
     else{
@@ -29,6 +30,7 @@ router.post("",isLoggedIn,function(req,res){
       if(isValid){
         Comment.create(comment,function(err,comment){
           if(err){
+            req.flash("error","Error while creating comment. Please try again.")
             console.log(err);
           }
           else{
@@ -39,6 +41,7 @@ router.post("",isLoggedIn,function(req,res){
         });
       }
       else{
+        req.flash("error","You are not authorized to do this.");
         res.redirect("/campgrounds/"+req.params.id+"/");
       }
     }
@@ -52,6 +55,7 @@ router.put("/:commentId",isLoggedIn,function(req,res){
   Comment.findOne({_id:req.params.commentId},function(err,comment){
     if(err){
       console.log(err);
+      req.flash("error","Error while editing the comment. Please try again.");
       res.redirect("back");
     }
     else if(req.user._id.toString() === comment.author.id.toString()){
@@ -64,9 +68,11 @@ router.put("/:commentId",isLoggedIn,function(req,res){
       }
       else{
         res.redirect("back");
+        req.flash("error","Comment can't be empty.");
       }
     }
     else{
+      req.flash("error","You are not authorized to do this.");
       res.redirect("/campgrounds/"+req.params.id+"/");
     }
   });
@@ -79,17 +85,20 @@ router.delete("/:commentId",isLoggedIn,function(req,res){
   Comment.findOne({_id:req.params.commentId},function(err,comment){
     if(err){
       console.log(err);
+      req.flash("error","Error while deleting the comment. Please try again.");
       res.redirect("back");
     }
     else if(req.user._id.toString() === comment.author.id.toString()){
       comment.remove(function(err){
         if(err){
+          req.flash("error","Error while deleting the comment. Please try again.");
           console.log(err);
         }
         res.redirect("/campgrounds/"+req.params.id+"/");
       });
     }
     else{
+      req.flash("error","You are not authorized to perform this action.");
       res.redirect("/campgrounds/"+req.params.id+"/");
     }
   });
@@ -99,6 +108,7 @@ function isLoggedIn(req,res,next){
   if(req.isAuthenticated()){
     return next();
   }
+  req.flash("error","Please Login first!");
   res.redirect("/login");
 }
 

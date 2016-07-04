@@ -30,9 +30,7 @@ function createEditForm (event) {
   deleteBtn.style.display = "none";
 
   inputField.value = commentNode.firstElementChild.textContent;
-  console.log(inputField);
   PREV_VALUE = commentNode.firstElementChild.textContent;
-  console.log(PREV_VALUE);
 
 	inputField.addEventListener("keypress",function(event){
 		if (event.which === 13 && this.value !== ""){
@@ -44,8 +42,6 @@ function createEditForm (event) {
 
 
 	commentNode.parentNode.replaceChild(edit,commentNode);
-  console.log(edit);
-  console.log(edit.firstElementChild);
 	inputField.focus();
 	inputField.select();
 
@@ -57,7 +53,6 @@ function sendForm(event){
   editForm.submit();
 }
 function createEditField(event){
-  console.log("Reached Here");
   var inputForm = event.currentTarget.parentNode;
   var comment = editField.cloneNode(true);
   var para = comment.firstElementChild;

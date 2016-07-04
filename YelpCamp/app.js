@@ -10,6 +10,7 @@ var express = require("express"),
     LocalStrategy = require("passport-local"),
     passportLocalMongoose = require("passport-local-mongoose"),
     User = require("./models/user");
+    flash = require("connect-flash");
 
 var indexRoutes = require("./routes/index"),
     campgroundRoutes = require("./routes/campgrounds"),
@@ -19,6 +20,7 @@ var app = express();
 
 mongoose.connect("mongodb://localhost/yelpcamp");
 
+app.use(flash());
 app.use(require("express-session")({
   secret: "I will become a legendary programmer and change the world.",
   resave: false,
@@ -40,6 +42,8 @@ passport.deserializeUser(User.deserializeUser());
 //Adding currentUser to local variables in templates
 app.use(function(req,res,next){
   res.locals.currentUser = req.user;
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
   next();
 });
 
